@@ -1,0 +1,9 @@
+#!/bin/bash
+export BRIDGESUSERNAME=aetheri2
+
+
+echo $BRIDGESUSERNAME
+
+export BRIDGESKEY=523459773336
+
+echo $BRIDGESKEY

@@ -1,0 +1,221 @@
+// BST implementation with nodes as BRIDGES BSTElement objects. insert, add_node(), getNode(), getNode() methods provided. Students to code rotateRight() and rotateLeft() methods.   
+#include <string>
+#include <cassert>
+#include "Bridges.h"
+#include "BSTElement.h"
+
+
+using namespace std;
+using namespace bridges;
+
+
+std::string getEnvVar(string const & key);
+
+struct pivotFamily {
+    BSTElement<int, string> *pivot;
+    BSTElement<int, string> *pivot_leftchild;
+    BSTElement<int, string> *pivot_rightchild;
+    BSTElement<int, string> *pivot_parent;
+    BSTElement<int, string> *pivot_parent_leftchild;
+    BSTElement<int, string> *pivot_parent_rightchild;
+    BSTElement<int, string> *pivot_grandparent;
+};
+
+
+class BST {
+  public:
+	  BST();
+	  int insert(int key, string value);
+	  BSTElement<int,string>* getNode(int key) const;
+ 	  void rotateRight(BSTElement<int, string> *pivot);
+	  void rotateLeft(BSTElement<int, string> *pivot);
+	  void display(); 
+  private:
+	  BSTElement<int, string> *root;
+	  // Private methods
+	  void add_node(BSTElement<int, string> *parent, BSTElement<int, string> *new_node);
+ 	  BSTElement<int, string>* findParentNode(BSTElement<int, string> *node) const;
+	  pivotFamily findFamily(BSTElement<int, string> *pivot); 
+
+
+};
+
+
+int main() {
+	
+	BST my_tree;
+
+	my_tree.insert(2, "two");
+	my_tree.insert(1, "one");
+	my_tree.insert(3, "three");
+	my_tree.insert(7, "seven");
+	my_tree.insert(10, "ten");
+	my_tree.insert(2, "two");
+   	my_tree.insert(5, "five");
+   	my_tree.insert(8, "eight");
+   	my_tree.insert(6, "six");
+   	my_tree.insert(4, "four");
+	
+	my_tree.display();
+
+	BSTElement<int, string> *n = my_tree.getNode(5);
+	
+	if (n != nullptr) {
+		cout << "Value of key is " << n->getValue() << endl;
+
+		my_tree.rotateRight(n);
+		my_tree.display(); // Check if right rotation was correctly implemented
+		n = my_tree.getNode(7);	
+		my_tree.rotateLeft(n); 
+		my_tree.display(); 
+	}
+	else {
+		cout << "Node does not exist" << endl;
+	}
+	
+
+	return 0;
+}
+
+BST::BST() {
+	root = nullptr;
+		 
+}
+
+
+int BST::insert(int key, string value) { 
+	BSTElement<int, string> *new_node = new BSTElement<int, string>(key, value); 
+	assert(new_node);
+	new_node->setKey(key);
+	new_node->setLeft(nullptr);
+	new_node->setRight(nullptr);
+	
+	if (root == nullptr) { 
+		root = new_node;
+	}
+   	else 
+		add_node(root, new_node); 
+
+	return 1; //Success
+}
+
+BSTElement<int, string>* BST::getNode(int element) const {
+   BSTElement<int, string>* current = root;
+   while (current != nullptr)
+   {
+      if (element < current->getKey())
+      {
+         current = current->getLeft();
+      }
+      else if (element > current->getKey())
+      {
+         current = current->getRight();
+      }
+      else return current;      
+   }
+   return nullptr;
+}
+
+void BST::rotateRight(BSTElement<int, string> *pivot)
+{
+// 	pivotFamily BST::findFamily(BSTElement<int, string> *pivot) 
+// {
+//     pivotFamily pF;
+//     pF.pivot = pivot;
+//     pF.pivot_parent = findParentNode(pivot);
+//     pF.pivot_leftchild = pivot->getLeft();
+//     pF.pivot_rightchild = pivot->getRight();
+//     pF.pivot_parent_leftchild = (pF.pivot_parent)->getLeft(); //possibly same as pivot
+//     pF.pivot_parent_rightchild = (pF.pivot_parent)->getRight(); //possible same as pivot
+//     pF.pivot_grandparent = findParentNode(pF.pivot_parent);
+    
+//     return pF;
+// }
+	// Your code here
+	BSTElement<int, string>* family = findFamily(pivot);
+	
+	
+}
+
+void BST::rotateLeft(BSTElement<int, string> *pivot)
+{
+	// Your code here
+	
+}
+
+
+
+void BST::display() {
+	string hilite_color = "orange",
+		   def_color = "green",
+		   end_color = "red";
+	Bridges::initialize(7, getEnvVar("BRIDGESUSERNAME"), getEnvVar("BRIDGESKEY"));
+	Bridges::setTitle("Binary Search Tree Visualization");
+
+	Bridges::setDataStructure(root); 
+	root->getVisualizer()->setColor(Color("red"));
+
+	Bridges::visualize();
+}
+
+
+
+// Private methods
+
+void BST::add_node(BSTElement<int, string> *parent, BSTElement<int, string> *new_node) {
+   if (new_node->getKey() < parent->getKey())
+   {
+      if (parent->getLeft() == nullptr) 
+      	parent->setLeft(new_node); 
+      else 
+      	add_node(parent->getLeft(), new_node); 
+   }
+   else if (new_node->getKey() > parent->getKey())
+   {
+      if (parent->getRight() == nullptr)
+      	parent->setRight(new_node);
+      else 
+      	add_node(parent->getRight(), new_node); 
+   }
+}
+	
+BSTElement<int, string>* BST::findParentNode(BSTElement<int, string> *node) const
+{
+	// Your code here
+	BSTElement<int, string>* current = root;
+	BSTElement<int, string>* parent = root;
+	while (node != current){
+		if(node->getKey() < current->getKey()){
+			parent = current;
+			current = current->getLeft();
+		}
+		else if(node->getKey() > current->getKey()){
+			parent = current;
+			current = current->getRight();
+		}
+		else return parent;
+	}
+	return nullptr;
+}
+
+pivotFamily BST::findFamily(BSTElement<int, string> *pivot) 
+{
+    pivotFamily pF;
+    pF.pivot = pivot;
+    pF.pivot_parent = findParentNode(pivot);
+    pF.pivot_leftchild = pivot->getLeft();
+    pF.pivot_rightchild = pivot->getRight();
+    pF.pivot_parent_leftchild = (pF.pivot_parent)->getLeft(); //possibly same as pivot
+    pF.pivot_parent_rightchild = (pF.pivot_parent)->getRight(); //possible same as pivot
+    pF.pivot_grandparent = findParentNode(pF.pivot_parent);
+    
+    return pF;
+}
+
+
+string getEnvVar(string const & key) {
+    char * val = getenv( key.c_str() );
+    return val == NULL ? string("") : string(val);
+}
+
+
